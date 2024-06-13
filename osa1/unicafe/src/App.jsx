@@ -4,6 +4,28 @@ const Button = (props) => (
   <button onClick={() => props.method(props.value + 1)}>{props.name}</button>
 );
 
+const Total = (props) => {
+  const all = props.good + props.neutral + props.bad;
+  console.log(props);
+  console.log({ all });
+  return <p>all {all}</p>;
+};
+
+const Average = (props) => {
+  const avg =
+    (props.good * 1 + props.neutral * 0 + props.bad * -1) /
+    (props.good + props.neutral + props.bad);
+  console.log(`avg: ${avg}`);
+  return <p>average {avg}</p>;
+};
+
+const Positive = (props) => {
+  const positive =
+    (props.good / (props.good + props.neutral + props.bad)) * 100;
+  console.log(`pos: ${positive}`);
+  return <p>positive {positive} %</p>;
+};
+
 const App = () => {
   // tallenna napit omaan tilaansa
   const [good, setGood] = useState(0);
@@ -19,8 +41,11 @@ const App = () => {
         <Button name="bad" method={setBad} value={bad} />
         <h1>statistics</h1>
         <p>good {good}</p>
-        <p>netral {neutral}</p>
+        <p>neutral {neutral}</p>
         <p>bad {bad}</p>
+        <Total good={good} neutral={neutral} bad={bad} />
+        <Average good={good} neutral={neutral} bad={bad} />
+        <Positive good={good} neutral={neutral} bad={bad} />
       </div>
     </>
   );
