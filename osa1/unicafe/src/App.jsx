@@ -30,11 +30,17 @@ const App = () => {
         <Button name="good" method={setGood} value={good} />
         <Button name="neutral" method={setNeutral} value={neutral} />
         <Button name="bad" method={setBad} value={bad} />
-        <h1>statistics</h1>
-        <p>good {good}</p>
-        <p>neutral {neutral}</p>
-        <p>bad {bad}</p>
-        <Statistics good={good} neutral={neutral} bad={bad} />
+        {good + neutral + bad < 1 ? (
+          <p>No feedback given</p>
+        ) : (
+          <>
+            <h1>statistics</h1>
+            <p>good {good}</p>
+            <p>neutral {neutral}</p>
+            <p>bad {bad}</p>
+            <Statistics good={good} neutral={neutral} bad={bad} />
+          </>
+        )}
       </div>
     </>
   );
