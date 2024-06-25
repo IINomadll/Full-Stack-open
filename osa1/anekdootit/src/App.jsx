@@ -10,7 +10,7 @@ const Button = ({ tableLength, method }) => (
   <button
     onClick={() => {
       console.log(`tableLength: ${tableLength}`);
-      method(getRandomInt(8));
+      method(getRandomInt(tableLength));
     }}
   >
     next anecdote
