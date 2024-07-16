@@ -1,20 +1,9 @@
 import { useState } from "react";
 
-const getRandomInt = (max) => {
-  const rand = Math.floor(Math.random() * max);
-  console.log(`rand: ${rand}`);
-  return rand;
-};
+const Display = ({ anecdote }) => <div>{anecdote}</div>;
 
-const Button = ({ tableLength, method }) => (
-  <button
-    onClick={() => {
-      console.log(`tableLength: ${tableLength}`);
-      method(getRandomInt(tableLength));
-    }}
-  >
-    next anecdote
-  </button>
+const Button = ({ handleClick, text }) => (
+  <button onClick={handleClick}>{text}</button>
 );
 
 const App = () => {
@@ -29,12 +18,30 @@ const App = () => {
     "The only way to go fast, is to go well.",
   ];
 
+  const anecdotesLength = anecdotes.length;
   const [selected, setSelected] = useState(0);
+  const [points, setPoints] = useState(Array(anecdotesLength).fill(0));
+
+  const getRandomInt = (max) => {
+    const rand = Math.floor(Math.random() * max);
+    console.log("rand ", rand);
+    return rand;
+  };
+
+  const handleRandomInt = () => setSelected(getRandomInt(anecdotesLength));
+
+  const handleVote = () => {
+    const copy = [...points];
+    copy[selected] += 1;
+    console.log(`points array: ${copy}`);
+    setPoints(copy);
+  };
 
   return (
     <>
-      <div>{anecdotes[selected]}</div>
-      <Button tableLength={anecdotes.length} method={setSelected} />
+      <Display anecdote={anecdotes[selected]} />
+      <Button handleClick={handleVote} text="vote" />
+      <Button handleClick={handleRandomInt} text="next anecdote" />
     </>
   );
 };
