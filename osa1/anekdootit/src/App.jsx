@@ -28,6 +28,18 @@ const App = () => {
     return rand;
   };
 
+  const mostVoted = () => {
+    let indexOfMax = points.reduce(
+      (maxIndex, currentValue, currentIndex, points) => {
+        return currentValue > points[maxIndex] ? currentIndex : maxIndex;
+      },
+      0
+    );
+
+    console.log("index of most voted: ", indexOfMax);
+    return indexOfMax;
+  };
+
   const handleRandomInt = () => setSelected(getRandomInt(anecdotesLength));
 
   const handleVote = () => {
@@ -39,9 +51,12 @@ const App = () => {
 
   return (
     <>
+      <h1>Anecdote of the day</h1>
       <Display anecdote={anecdotes[selected]} />
       <Button handleClick={handleVote} text="vote" />
       <Button handleClick={handleRandomInt} text="next anecdote" />
+      <h1>Anecdote with most votes</h1>
+      <Display anecdote={anecdotes[mostVoted()]} />
     </>
   );
 };
