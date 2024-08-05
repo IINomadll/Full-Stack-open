@@ -15,19 +15,13 @@ const Part = ({ part }) => (
 const Content = ({ parts }) =>
   parts.map((part) => <Part key={part.id} part={part} />);
 
-const Course = ({ course }) => {
-  let sum = 0;
-  course.parts.map((part) => (sum += part.exercises));
-  console.log("sum", sum);
-
-  return (
-    <>
-      <Header course={course.name} />
-      <Content parts={course.parts} />
-      <Total sum={sum} />
-    </>
-  );
-};
+const Course = ({ course }) => (
+  <>
+    <Header course={course.name} />
+    <Content parts={course.parts} />
+    <Total sum={course.parts.reduce((sum, part) => sum + part.exercises, 0)} />
+  </>
+);
 
 const App = () => {
   const course = {
@@ -51,7 +45,7 @@ const App = () => {
       },
       {
         name: "Higher order functions",
-        exercises: 69,
+        exercises: 11,
         id: 4,
       },
     ],
