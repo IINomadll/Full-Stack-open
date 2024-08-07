@@ -6,8 +6,6 @@ const App = () => {
   const [persons, setPersons] = useState([{ name: "Waltteri Lehtinen" }]);
   const [newName, setNewName] = useState("");
 
-  // console.log("persons:", persons);
-
   const addName = (event) => {
     event.preventDefault();
     console.log("button clicked", event.target);
@@ -15,12 +13,22 @@ const App = () => {
       name: newName,
     };
 
-    setPersons(persons.concat(nameObj)); // add new name to persons arr
-    setNewName(""); // empty input field after submit
+    const found = persons.find(
+      (element) => element.name.toLowerCase() === newName.toLowerCase()
+    );
+    console.log("FOUND", found);
+
+    if (found) {
+      console.log(`${newName} is already added to phonebook`);
+      alert(`${newName} is already added to phonebook`);
+    } else {
+      setPersons(persons.concat(nameObj)); // add new name to persons arr
+      setNewName(""); // empty input field after submit
+    }
   };
 
   const handleNameChange = (event) => {
-    console.log(event.target.value);
+    // console.log(event.target.value);
     setNewName(event.target.value);
   };
 
