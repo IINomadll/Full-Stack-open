@@ -19,13 +19,35 @@ const Display = ({ persons, search }) => {
   );
 };
 
+const Filter = ({ search, handler }) => (
+  <div>
+    filter shown with <input value={search} onChange={handler} />
+  </div>
+);
+
+const PersonForm = (props) => {
+  return (
+    <form onSubmit={props.addPerson}>
+      <div>
+        name: <input value={props.newName} onChange={props.nameHandler} />
+      </div>
+      <div>
+        number: <input value={props.newNumber} onChange={props.numberHandler} />
+      </div>
+      <div>
+        <button type="submit">add</button>
+      </div>
+    </form>
+  );
+};
+
 const App = () => {
   const [persons, setPersons] = useState([
     { name: "Waltteri Lehtinen", number: "045-1234567" },
-    { name: "Scarlett Johansson", number: "040-1234567" },
     { name: "Sydney Sweeney", number: "050-1234567" },
+    { name: "Scarlett Johansson", number: "040-1234567" },
     { name: "Emilia Clarke", number: "046-1234567" },
-    { name: "Jarskibastian Lehtipihvinen", number: "055-1234567" },
+    { name: "Jennifer Lawrence", number: "055-1234567" },
   ]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
@@ -59,26 +81,20 @@ const App = () => {
   const handleNumberChange = (event) => setNewNumber(event.target.value);
 
   return (
-    <div>
+    <>
       <h2>Phonebook</h2>
-      <div>
-        filer shown with <input value={search} onChange={handleSearchChange} />
-      </div>
+      <Filter search={search} handler={handleSearchChange} />
       <h2>add a new</h2>
-      <form onSubmit={addPerson}>
-        <div>
-          name: <input value={newName} onChange={handleNameChange} />
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={handleNumberChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <PersonForm
+        addPerson={addPerson}
+        newName={newName}
+        newNumber={newNumber}
+        nameHandler={handleNameChange}
+        numberHandler={handleNumberChange}
+      />
       <h2>contacts</h2>
       <Display persons={persons} search={search} />
-    </div>
+    </>
   );
 };
 
