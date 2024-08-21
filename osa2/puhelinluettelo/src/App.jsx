@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 const Display = ({ persons, search }) => {
   const filteredPersons =
@@ -42,16 +43,20 @@ const PersonForm = (props) => {
 };
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: "Waltteri Lehtinen", number: "045-1234567" },
-    { name: "Sydney Sweeney", number: "050-1234567" },
-    { name: "Scarlett Johansson", number: "040-1234567" },
-    { name: "Emilia Clarke", number: "046-1234567" },
-    { name: "Jennifer Lawrence", number: "055-1234567" },
-  ]);
+  const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    console.log("effect");
+    axios.get("http://localhost:3001/persons").then((response) => {
+      console.log("promise fulfilled");
+      setPersons(response.data);
+    });
+  }, []);
+
+  console.log("render", persons.length, "persons");
 
   const addPerson = (event) => {
     event.preventDefault(); // prevent default actions like page reload
