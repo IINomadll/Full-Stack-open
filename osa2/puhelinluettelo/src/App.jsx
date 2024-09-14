@@ -75,7 +75,25 @@ const App = () => {
 
     if (found) {
       console.log(`${newName} is already added to phonebook`);
-      alert(`${newName} is already added to phonebook`);
+      const choice = window.confirm(
+        `${newName} is already added to phonebook, replace the old number with a new one?`
+      );
+
+      if (choice) {
+        console.log("FOUND ", found);
+        personService
+          .update(found.id, { ...found, number: newNumber })
+          .then((response) => {
+            console.log(response);
+            setPersons(
+              persons.map((p) =>
+                p.id !== found.id ? p : { ...p, number: response.data.number }
+              )
+            );
+          });
+        setNewName(""); // clear input field after submit
+        setNewNumber(""); // --||--
+      } else console.log("Put action cancelled.");
     } else {
       // prettier-ignore
       personService
