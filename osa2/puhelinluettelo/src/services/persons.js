@@ -7,4 +7,7 @@ const getAll = () => axios.get(baseUrl);
 // HTTP POST
 const create = (newObject) => axios.post(baseUrl, newObject);
 
-export default { getAll, create };
+// HTTP DELETE
+const eradicate = (id) => axios.delete(`${baseUrl}/${id}`);
+
+export default { getAll, create, eradicate };
