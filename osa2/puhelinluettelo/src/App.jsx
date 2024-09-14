@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import personService from "./services/persons";
 
 const Display = ({ persons, search }) => {
   const filteredPersons =
@@ -51,8 +51,8 @@ const App = () => {
   useEffect(() => {
     console.log("effect");
     // prettier-ignore
-    axios
-      .get("http://localhost:3001/persons")
+    personService
+      .getAll()
       .then((response) => {
         console.log("promise fulfilled");
         setPersons(response.data);
@@ -77,12 +77,12 @@ const App = () => {
       alert(`${newName} is already added to phonebook`);
     } else {
       // prettier-ignore
-      axios
-        .post("http://localhost:3001/persons", personObj)
+      personService
+        .create(personObj)
         .then(response => {
           console.log(response);
-        })
-      setPersons(persons.concat(personObj)); // add new person to persons array
+          setPersons(persons.concat(response.data));
+        });
       setNewName(""); // clear input field after submit
       setNewNumber(""); // --||--
     }
