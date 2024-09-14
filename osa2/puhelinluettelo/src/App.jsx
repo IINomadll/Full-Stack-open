@@ -50,13 +50,14 @@ const App = () => {
 
   useEffect(() => {
     console.log("effect");
-    axios.get("http://localhost:3001/persons").then((response) => {
-      console.log("promise fulfilled");
-      setPersons(response.data);
+    // prettier-ignore
+    axios
+      .get("http://localhost:3001/persons")
+      .then((response) => {
+        console.log("promise fulfilled");
+        setPersons(response.data);
     });
   }, []);
-
-  console.log("render", persons.length, "persons");
 
   const addPerson = (event) => {
     event.preventDefault(); // prevent default actions like page reload
@@ -75,6 +76,12 @@ const App = () => {
       console.log(`${newName} is already added to phonebook`);
       alert(`${newName} is already added to phonebook`);
     } else {
+      // prettier-ignore
+      axios
+        .post("http://localhost:3001/persons", personObj)
+        .then(response => {
+          console.log(response);
+        })
       setPersons(persons.concat(personObj)); // add new person to persons array
       setNewName(""); // clear input field after submit
       setNewNumber(""); // --||--
