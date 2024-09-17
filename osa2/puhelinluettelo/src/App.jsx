@@ -43,11 +43,19 @@ const PersonForm = (props) => {
   );
 };
 
+const Notification = ({ message }) => {
+  if (message === null) return null;
+
+  return <div className="notification">{message}</div>;
+};
+
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [search, setSearch] = useState("");
+  const [message, setMessage] = useState(null);
+  // const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     console.log("effect");
@@ -90,6 +98,10 @@ const App = () => {
                 p.id !== found.id ? p : { ...p, number: response.data.number }
               )
             );
+            setMessage(`Updated ${found.name}`);
+            setTimeout(() => {
+              setMessage(null);
+            }, 5000);
           });
         setNewName(""); // clear input field after submit
         setNewNumber(""); // --||--
@@ -101,6 +113,10 @@ const App = () => {
         .then(response => {
           console.log(response);
           setPersons(persons.concat(response.data));
+          setMessage(`Added ${personObj.name}`);
+          setTimeout(() => {
+            setMessage(null);
+          }, 5000);
         });
       setNewName(""); // clear input field after submit
       setNewNumber(""); // --||--
@@ -118,6 +134,10 @@ const App = () => {
       .then(response => {
         console.log(response);
         setPersons(persons.filter(p => p.id !== id));
+        setMessage(`Successfully deleted ${name}`);
+        setTimeout(() => {
+          setMessage(null);
+        }, 5000);
       });
     } else console.log("Delete action cancelled.");
   };
@@ -138,6 +158,7 @@ const App = () => {
         nameHandler={handleNameChange}
         numberHandler={handleNumberChange}
       />
+      <Notification message={message} />
       <h2>contacts</h2>
       <Display persons={persons} search={search} deletePerson={deletePerson} />
     </>
