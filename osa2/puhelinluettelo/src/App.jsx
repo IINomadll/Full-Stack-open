@@ -43,10 +43,13 @@ const PersonForm = (props) => {
   );
 };
 
-const Notification = ({ message }) => {
-  if (message === null) return null;
-
-  return <div className="notification">{message}</div>;
+const Notification = ({ message, error }) => {
+  if (message === null && error === null) return null;
+  return message !== null ? (
+    <div className="notification">{message}</div>
+  ) : (
+    <div className="error">{error}</div>
+  );
 };
 
 const App = () => {
@@ -55,7 +58,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [search, setSearch] = useState("");
   const [message, setMessage] = useState(null);
-  // const [errorMessage, setErrorMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     console.log("effect");
@@ -65,7 +68,14 @@ const App = () => {
       .then((response) => {
         console.log("promise fulfilled");
         setPersons(response.data);
-    });
+      })
+      .catch((err) => {
+        console.log("CAUGHT ERROR: ", err);
+        setErrorMessage("Failed to GET person data");
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
+      });
   }, []);
 
   const addPerson = (event) => {
@@ -102,6 +112,13 @@ const App = () => {
             setTimeout(() => {
               setMessage(null);
             }, 5000);
+          })
+          .catch((err) => {
+            console.log("CAUGHT ERROR: ", err);
+            setErrorMessage(`Failed to PUT (update) data for ${found.name}`);
+            setTimeout(() => {
+              setErrorMessage(null);
+            }, 5000);
           });
         setNewName(""); // clear input field after submit
         setNewNumber(""); // --||--
@@ -110,12 +127,19 @@ const App = () => {
       // prettier-ignore
       personService
         .create(personObj)
-        .then(response => {
+        .then((response) => {
           console.log(response);
           setPersons(persons.concat(response.data));
           setMessage(`Added ${personObj.name}`);
           setTimeout(() => {
             setMessage(null);
+          }, 5000);
+        })
+        .catch((err) => {
+          console.log("CAUGHT ERROR: ", err);
+          setErrorMessage(`Failed to POST (create) ${personObj.name}`);
+          setTimeout(() => {
+            setErrorMessage(null);
           }, 5000);
         });
       setNewName(""); // clear input field after submit
@@ -130,15 +154,22 @@ const App = () => {
     if (choice) {
       // prettier-ignore
       personService
-      .eradicate(id)
-      .then(response => {
-        console.log(response);
-        setPersons(persons.filter(p => p.id !== id));
-        setMessage(`Successfully deleted ${name}`);
-        setTimeout(() => {
-          setMessage(null);
-        }, 5000);
-      });
+        .eradicate(id)
+        .then((response) => {
+          console.log(response);
+          setPersons(persons.filter((p) => p.id !== id));
+          setMessage(`Successfully deleted ${name}`);
+          setTimeout(() => {
+            setMessage(null);
+          }, 5000);
+        })
+        .catch((err) => {
+          console.log("CAUGHT ERROR: ", err);
+          setErrorMessage(`Failed to DELETE ${name}`);
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 5000);
+        });
     } else console.log("Delete action cancelled.");
   };
 
@@ -158,7 +189,7 @@ const App = () => {
         nameHandler={handleNameChange}
         numberHandler={handleNumberChange}
       />
-      <Notification message={message} />
+      <Notification message={message} error={errorMessage} />
       <h2>contacts</h2>
       <Display persons={persons} search={search} deletePerson={deletePerson} />
     </>

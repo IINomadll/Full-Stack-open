@@ -2,7 +2,7 @@
   "persons": [
     {
       "name": "Sydney Sweeney",
-      "number": "050-1234567",
+      "number": "050-2340983",
       "id": "2"
     },
     {
@@ -29,11 +29,6 @@
       "id": "0c98",
       "name": "Jennifer Lawrence",
       "number": "044-5559876"
-    },
-    {
-      "id": "c1dc",
-      "name": "Triss Merigold",
-      "number": "046-6160205"
     }
   ]
 }
