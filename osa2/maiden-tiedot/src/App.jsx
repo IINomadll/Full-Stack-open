@@ -2,6 +2,12 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 const Display = ({ filteredCountries }) => {
+  const [selectedCountry, setSelectedCountry] = useState(null);
+
+  const buttonClicked = (country) => setSelectedCountry(country);
+
+  if (selectedCountry) return <DisplaySingle country={selectedCountry} />;
+
   switch (true) {
     case filteredCountries.length > 10:
       console.log(
@@ -15,7 +21,8 @@ const Display = ({ filteredCountries }) => {
           <br />
           {filteredCountries.map((country) => (
             <li style={{ listStyleType: "none" }} key={country.name.official}>
-              {country.name.common}
+              {country.name.common}&emsp;{/*<- four space gap in text*/}
+              <button onClick={() => buttonClicked(country)}>show</button>
             </li>
           ))}
         </>
@@ -23,31 +30,35 @@ const Display = ({ filteredCountries }) => {
     case filteredCountries.length === 1: {
       console.log("One country found! Displaying the data");
       const country = filteredCountries[0];
-      // Get all language values from the object
-      const languageArr = Object.values(country.languages);
-      return (
-        <>
-          <h1>{country.name.common}</h1>
-          <p>
-            capital: {country.capital}
-            <br />
-            area: {country.area} km²
-          </p>
-          <h3>languages:</h3>
-          <ul>
-            {languageArr.map((value, index) => {
-              console.log(value);
-              return <li key={index}>{value}</li>;
-            })}
-          </ul>
-          <img src={country.flags.png} alt={country.flags.alt}></img>
-        </>
-      );
+      return <DisplaySingle country={country} />;
     }
     default:
       console.log("Array empty, nothing to display");
       return <p>No countries found, nothing to display</p>;
   }
+};
+
+const DisplaySingle = ({ country }) => {
+  // Get all language values from the object
+  const languageArr = Object.values(country.languages);
+  return (
+    <>
+      <h1>{country.name.common}</h1>
+      <p>
+        capital: {country.capital}
+        <br />
+        area: {country.area} km²
+      </p>
+      <h3>languages:</h3>
+      <ul>
+        {languageArr.map((value, index) => {
+          console.log(value);
+          return <li key={index}>{value}</li>;
+        })}
+      </ul>
+      <img src={country.flags.png} alt={country.flags.alt}></img>
+    </>
+  );
 };
 
 const Filter = ({ search, countries }) => {
