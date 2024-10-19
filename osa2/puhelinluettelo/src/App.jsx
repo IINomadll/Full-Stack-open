@@ -137,7 +137,7 @@ const App = () => {
         })
         .catch((err) => {
           console.log("CAUGHT ERROR: ", err);
-          setErrorMessage(`Failed to POST (create) ${personObj.name}`);
+          setErrorMessage(String(err.response.data.error));
           setTimeout(() => {
             setErrorMessage(null);
           }, 5000);
