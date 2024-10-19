@@ -115,7 +115,7 @@ const App = () => {
           })
           .catch((err) => {
             console.log("CAUGHT ERROR: ", err);
-            setErrorMessage(`Failed to PUT (update) data for ${found.name}`);
+            setErrorMessage(String(err.response.data.error));
             setTimeout(() => {
               setErrorMessage(null);
             }, 5000);
