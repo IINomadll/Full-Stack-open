@@ -1,6 +1,6 @@
 const { test, describe } = require("node:test");
 const assert = require("assert");
-const { totalLikes } = require("../utils/list_helper");
+const { totalLikes, favoriteBlog } = require("../utils/list_helper");
 
 const blogs = [
   {
@@ -67,5 +67,46 @@ describe("totalLikes", () => {
   test("works with a single blog", () => {
     const result = totalLikes([{ title: "Test Blog", likes: 10 }]);
     assert.strictEqual(result, 10);
+  });
+});
+
+describe("favoriteBlog", () => {
+  test("returns the blog with the most likes", () => {
+    const result = favoriteBlog(blogs);
+    assert.deepStrictEqual(result, {
+      title: "Canonical string reduction",
+      author: "Edsger W. Dijkstra",
+      likes: 12,
+    });
+  });
+
+  test("returns null if the array is empty", () => {
+    const result = favoriteBlog([]);
+    assert.strictEqual(result, null);
+  });
+
+  test("works with a single blog", () => {
+    const singleBlog = [
+      {
+        title: "Test Blog",
+        author: "Test Author",
+        likes: 5,
+      },
+    ];
+    const result = favoriteBlog(singleBlog);
+    assert.deepStrictEqual(result, {
+      title: "Test Blog",
+      author: "Test Author",
+      likes: 5,
+    });
+  });
+
+  test("returns one blog if there are multiple with the same highest likes", () => {
+    const blogsWithTies = [
+      { title: "Blog 1", author: "Author 1", likes: 5 },
+      { title: "Blog 2", author: "Author 2", likes: 5 },
+    ];
+    const result = favoriteBlog(blogsWithTies);
+    assert.strictEqual(result.likes, 5);
   });
 });
