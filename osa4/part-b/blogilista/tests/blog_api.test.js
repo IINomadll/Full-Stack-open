@@ -50,6 +50,29 @@ test("blogs have correctly named 'id' fields", async () => {
   assert("id" in firstBlog);
 });
 
+test("a valid blog can be added", async () => {
+  const newBlog = {
+    title: "test title",
+    author: "test author",
+    url: "someblog.blog.test",
+  };
+
+  await api
+    .post("/api/blogs")
+    .send(newBlog)
+    .expect(201)
+    .expect("Content-Type", /application\/json/);
+
+  const response = await api.get("/api/blogs");
+
+  assert.strictEqual(response.body.length, initialBlogs.length + 1);
+
+  const addedBlog = response.body[response.body.length - 1];
+
+  const expectedKeys = ["id", "title", "author", "url"];
+  assert.deepStrictEqual(Object.keys(addedBlog).sort(), expectedKeys.sort());
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
