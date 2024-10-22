@@ -96,6 +96,40 @@ test("omitted likes field converts to zero likes", async () => {
   assert.strictEqual(addedBlog.likes, 0);
 });
 
+test("blog without title is not added (400 Bad Request)", async () => {
+  const newBlogWithoutTitle = {
+    author: "test author",
+    url: "someblog.blog.test",
+    likes: 3,
+  };
+
+  // prettier-ignore
+  await api
+    .post("/api/blogs")
+    .send(newBlogWithoutTitle)
+    .expect(400);
+
+  const response = await api.get("/api/blogs");
+  assert.strictEqual(response.body.length, initialBlogs.length);
+});
+
+test("blog without url is not added (400 Bad Request)", async () => {
+  const newBlogWithoutUrl = {
+    title: "test title",
+    author: "test author",
+    likes: 7,
+  };
+
+  // prettier-ignore
+  await api
+    .post("/api/blogs")
+    .send(newBlogWithoutUrl)
+    .expect(400);
+
+  const response = await api.get("/api/blogs");
+  assert.strictEqual(response.body.length, initialBlogs.length);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
