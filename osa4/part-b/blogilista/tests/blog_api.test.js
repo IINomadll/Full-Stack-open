@@ -12,16 +12,19 @@ const initialBlogs = [
     title: "some blog",
     author: "Jarskibastian Lehtipihvinen",
     url: "someblog.blog",
+    likes: 999,
   },
   {
     title: "Speedhunters",
     author: "D.K.",
     url: "https://www.speedhunters.com/",
+    likes: 420,
   },
   {
     title: "test blog",
     author: "tester",
     url: "test.test",
+    likes: 5,
   },
 ];
 
@@ -55,6 +58,7 @@ test("a valid blog can be added", async () => {
     title: "test title",
     author: "test author",
     url: "someblog.blog.test",
+    likes: 73,
   };
 
   await api
@@ -69,8 +73,27 @@ test("a valid blog can be added", async () => {
 
   const addedBlog = response.body[response.body.length - 1];
 
-  const expectedKeys = ["id", "title", "author", "url"];
+  const expectedKeys = ["id", "title", "author", "url", "likes"];
   assert.deepStrictEqual(Object.keys(addedBlog).sort(), expectedKeys.sort());
+});
+
+test("omitted likes field converts to zero likes", async () => {
+  const newBlog = {
+    title: "test title",
+    author: "test author",
+    url: "someblog.blog.test",
+  };
+
+  await api
+    .post("/api/blogs")
+    .send(newBlog)
+    .expect(201)
+    .expect("Content-Type", /application\/json/);
+
+  const response = await api.get("/api/blogs");
+  const addedBlog = response.body[response.body.length - 1];
+
+  assert.strictEqual(addedBlog.likes, 0);
 });
 
 after(async () => {
