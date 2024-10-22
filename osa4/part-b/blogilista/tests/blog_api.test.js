@@ -43,6 +43,13 @@ test("there are three blogs", async () => {
   assert.strictEqual(response.body.length, initialBlogs.length);
 });
 
+test("blogs have correctly named 'id' fields", async () => {
+  const response = await api.get("/api/blogs");
+  const firstBlog = response.body[0];
+
+  assert("id" in firstBlog);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
