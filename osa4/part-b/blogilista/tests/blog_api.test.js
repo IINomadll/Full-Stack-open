@@ -143,6 +143,86 @@ test("blog deletion succeeds (204 No Content)", async () => {
   assert.strictEqual(response.body.length, initialBlogs.length - 1);
 });
 
+test("an existing blog can be updated", async () => {
+  const newBlog = {
+    title: "Original Title",
+    author: "Original Author",
+    url: "original.url.test",
+    likes: 5,
+  };
+
+  const blogToUpdate = await api
+    .post("/api/blogs")
+    .send(newBlog)
+    .expect(201)
+    .expect("Content-Type", /application\/json/);
+
+  const updatedData = {
+    title: "Updated Title",
+    author: "Updated Author",
+    url: "updated.url.test",
+    likes: 10,
+  };
+
+  const updatedBlog = await api
+    .put(`/api/blogs/${blogToUpdate.body.id}`)
+    .send(updatedData)
+    .expect(200)
+    .expect("Content-Type", /application\/json/);
+
+  assert.strictEqual(updatedBlog.body.title, updatedData.title);
+  assert.strictEqual(updatedBlog.body.author, updatedData.author);
+  assert.strictEqual(updatedBlog.body.url, updatedData.url);
+  assert.strictEqual(updatedBlog.body.likes, updatedData.likes);
+
+  const response = await api.get(`/api/blogs/${blogToUpdate.body.id}`);
+  assert.strictEqual(response.body.title, updatedData.title);
+  assert.strictEqual(response.body.author, updatedData.author);
+  assert.strictEqual(response.body.url, updatedData.url);
+  assert.strictEqual(response.body.likes, updatedData.likes);
+});
+
+test("an existing blog can be partially updated", async () => {
+  const newBlog = {
+    title: "Original Title",
+    author: "Original Author",
+    url: "original.url.test",
+    likes: 5,
+  };
+
+  const blogToUpdate = await api
+    .post("/api/blogs")
+    .send(newBlog)
+    .expect(201)
+    .expect("Content-Type", /application\/json/);
+
+  const blogId = blogToUpdate.body.id;
+
+  const originalBlog = await api.get(`/api/blogs/${blogId}`);
+
+  const updatedData = {
+    likes: 10,
+  };
+
+  const updatedBlog = await api
+    .put(`/api/blogs/${blogId}`)
+    .send(updatedData)
+    .expect(200)
+    .expect("Content-Type", /application\/json/);
+
+  assert.strictEqual(updatedBlog.body.likes, updatedData.likes);
+
+  assert.strictEqual(updatedBlog.body.title, originalBlog.body.title);
+  assert.strictEqual(updatedBlog.body.author, originalBlog.body.author);
+  assert.strictEqual(updatedBlog.body.url, originalBlog.body.url);
+
+  const response = await api.get(`/api/blogs/${blogId}`);
+  assert.strictEqual(response.body.likes, updatedData.likes);
+  assert.strictEqual(response.body.title, originalBlog.body.title);
+  assert.strictEqual(response.body.author, originalBlog.body.author);
+  assert.strictEqual(response.body.url, originalBlog.body.url);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
