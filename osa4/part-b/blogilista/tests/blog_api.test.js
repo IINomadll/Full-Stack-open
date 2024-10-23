@@ -130,6 +130,19 @@ test("blog without url is not added (400 Bad Request)", async () => {
   assert.strictEqual(response.body.length, initialBlogs.length);
 });
 
+test("blog deletion succeeds (204 No Content)", async () => {
+  let response = await api.get("/api/blogs");
+  const blogToDelete = response.body[response.body.length - 1];
+
+  //prettier-ignore
+  await api
+    .delete(`/api/blogs/${blogToDelete.id}`)
+    .expect(204);
+
+  response = await api.get("/api/blogs");
+  assert.strictEqual(response.body.length, initialBlogs.length - 1);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
