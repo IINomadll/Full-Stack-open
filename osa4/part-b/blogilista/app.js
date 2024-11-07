@@ -18,12 +18,13 @@ mongoose
   .then(() => {
     info("connected to MongoDB");
   })
-  .catch((error) => {
-    error("error connection to MongoDB:", error.message);
+  .catch((err) => {
+    error("error connection to MongoDB:", err.message);
   });
 
 app.use(cors());
 app.use(express.json());
+app.use(middleware.tokenExtractor);
 app.use(middleware.requestLogger);
 
 app.use("/api/blogs", blogsRouter);
