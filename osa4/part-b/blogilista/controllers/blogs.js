@@ -3,6 +3,7 @@ const Blog = require("../models/blog");
 const User = require("../models/user");
 const logger = require("../utils/logger");
 const jwt = require("jsonwebtoken");
+const { userExtractor } = require("../utils/middleware");
 
 blogsRouter.get("/", async (request, response) => {
   const blogs = await Blog.find({}).populate("user", {
@@ -18,19 +19,9 @@ blogsRouter.get("/:id", async (request, response) => {
   response.json(wantedBlog);
 });
 
-blogsRouter.post("/", async (request, response) => {
+blogsRouter.post("/", userExtractor, async (request, response) => {
   const body = request.body;
-  // verify validity of token and decode the object that was used to create
-  // the token in the first place { 'username' and 'id' }
-  const decodedToken = jwt.verify(request.token, process.env.SECRET);
-  if (!decodedToken.id)
-    return response.status(401).json({ error: "token invalid" });
-
-  const user = await User.findById(decodedToken.id);
-  logger.info("USER", user);
-
-  // if user is not given, find the first document in the collection
-  // if (user === null) user = await User.findOne();
+  const user = request.user;
 
   if (!body.title || !body.url) response.status(400).end();
   else {
@@ -49,7 +40,7 @@ blogsRouter.post("/", async (request, response) => {
   }
 });
 
-blogsRouter.delete("/:id", async (request, response) => {
+blogsRouter.delete("/:id", userExtractor, async (request, response) => {
   // see if token exists in request
   const token = request.token;
   if (!token) return response.status(401).json({ error: "token missing" });
