@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Blog from "./components/Blog";
+import BlogForm from "./components/BlogForm";
 import LoginForm from "./components/loginForm";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
@@ -33,6 +34,7 @@ const App = () => {
       });
 
       window.localStorage.setItem("loggedBloglistUser", JSON.stringify(user));
+      blogService.setToken(user.token);
       setUser(user);
       setUsername("");
       setPassword("");
@@ -45,6 +47,7 @@ const App = () => {
     window.localStorage.removeItem("loggedBloglistUser");
     console.log("logged out, refresh page");
   };
+
   return (
     <div>
       <h1>Bloglist</h1>
@@ -61,6 +64,7 @@ const App = () => {
         <div>
           <p>{user.name} logged in</p>
           <button onClick={handleLogout}>logout</button>
+          {<BlogForm />}
           <h2>Blogs</h2>
           {blogs.map((blog) => (
             <Blog key={blog.id} blog={blog} />
