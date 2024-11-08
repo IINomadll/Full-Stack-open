@@ -1,6 +1,6 @@
 import axios from "axios";
-const baseUrl = "/api/blogs";
 
+const baseUrl = "/api/blogs";
 let token = null;
 
 // when exported, allows other files to set values to 'token'
@@ -18,7 +18,9 @@ const create = async (newBlog) => {
     headers: { Authorization: token },
   };
 
+  console.log(newBlog, config);
   const response = await axios.post(baseUrl, newBlog, config);
+  console.log(response.data);
   return response.data;
 };
 

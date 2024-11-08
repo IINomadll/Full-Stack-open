@@ -18,10 +18,15 @@ const BlogForm = () => {
     });
   };
 
+  const submitHandler = (e) => {
+    e.preventDefault();
+    blogService.create(formData);
+  };
+
   return (
     <>
       <h2>Create new blog</h2>
-      <form onSubmit={() => blogService.create(formData)}>
+      <form onSubmit={submitHandler}>
         <label>
           Title:
           <input
