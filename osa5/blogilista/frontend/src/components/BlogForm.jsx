@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import blogService from "../services/blogs";
 
-const BlogForm = ({ blogs, setBlogs }) => {
+const BlogForm = ({ blogs, setBlogs, setMessage, setErrorMessage }) => {
   const [formData, setFormData] = useState({
     title: "",
     author: "",
@@ -25,6 +25,10 @@ const BlogForm = ({ blogs, setBlogs }) => {
       if (newBlog && newBlog.id) {
         // ensure newBlog had an id created by db
         setBlogs(blogs.concat(newBlog));
+        setMessage(`a new blog ${newBlog.title} by ${newBlog.author} added`);
+        setTimeout(() => {
+          setMessage(null);
+        }, 5000);
         setFormData({ title: "", author: "", url: "", likes: 0 });
       } else {
         console.error(
@@ -33,6 +37,10 @@ const BlogForm = ({ blogs, setBlogs }) => {
         );
       }
     } catch (error) {
+      setErrorMessage("an error occured while trying to create the blog");
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
       console.error("Error creating blog:", error);
     }
   };

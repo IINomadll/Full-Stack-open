@@ -12,6 +12,8 @@ const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
+  const [message, setMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     blogService.getAll().then((blogs) => {
@@ -46,6 +48,10 @@ const App = () => {
       setPassword("");
     } catch (err) {
       console.error("Error: 401 unauthorized", err);
+      setErrorMessage("Wrong username and/or password");
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
     }
   };
 
@@ -58,6 +64,7 @@ const App = () => {
   return (
     <div>
       <h1>Bloglist</h1>
+      <Notification message={message} error={errorMessage} />
       {!user && (
         <LoginForm
           username={username}
@@ -71,7 +78,14 @@ const App = () => {
         <div>
           <p>{user.name} logged in</p>
           <button onClick={handleLogout}>logout</button>
-          {<BlogForm blogs={blogs} setBlogs={setBlogs} />}
+          {
+            <BlogForm
+              blogs={blogs}
+              setBlogs={setBlogs}
+              setMessage={setMessage}
+              setErrorMessage={setErrorMessage}
+            />
+          }
           <h2>Blogs</h2>
           {blogs.map((blog) => (
             <Blog key={blog.id} blog={blog} />
