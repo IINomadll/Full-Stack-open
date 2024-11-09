@@ -14,7 +14,10 @@ const App = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
+    blogService.getAll().then((blogs) => {
+      // console.log("BLOGS", blogs);
+      setBlogs(blogs);
+    });
   }, []);
 
   useEffect(() => {
@@ -28,27 +31,28 @@ const App = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault();
-    console.log("logging in with", username, password);
-
+    // console.log("logging in with", username, password);
     try {
       const user = await loginService.login({
         username,
         password,
       });
 
+      console.log(`${user.username} logged in`);
       window.localStorage.setItem("loggedBloglistUser", JSON.stringify(user));
       blogService.setToken(user.token);
       setUser(user);
       setUsername("");
       setPassword("");
     } catch (err) {
-      throw err;
+      console.error("Error: 401 unauthorized", err);
     }
   };
 
   const handleLogout = () => {
     window.localStorage.removeItem("loggedBloglistUser");
-    console.log("logged out, refresh page");
+    setUser(null);
+    console.log("logged out");
   };
 
   return (
@@ -67,7 +71,7 @@ const App = () => {
         <div>
           <p>{user.name} logged in</p>
           <button onClick={handleLogout}>logout</button>
-          {<BlogForm />}
+          {<BlogForm blogs={blogs} setBlogs={setBlogs} />}
           <h2>Blogs</h2>
           {blogs.map((blog) => (
             <Blog key={blog.id} blog={blog} />
