@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import Blog from "./components/Blog";
 import BlogForm from "./components/BlogForm";
@@ -6,6 +6,7 @@ import LoginForm from "./components/loginForm";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import Notification from "./components/Notification";
+import Togglable from "./components/Togglable";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -15,9 +16,10 @@ const App = () => {
   const [message, setMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
 
+  const blogFormRef = useRef();
+
   useEffect(() => {
     blogService.getAll().then((blogs) => {
-      // console.log("BLOGS", blogs);
       setBlogs(blogs);
     });
   }, []);
@@ -33,7 +35,6 @@ const App = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault();
-    // console.log("logging in with", username, password);
     try {
       const user = await loginService.login({
         username,
@@ -61,6 +62,25 @@ const App = () => {
     console.log("logged out");
   };
 
+  const addBlog = (blogObject) => {
+    blogFormRef.current.toggleVisibility();
+    // prettier-ignore
+    blogService
+      .create(blogObject)
+      .then((returnedBlog) => {
+        setBlogs(blogs.concat(returnedBlog));
+        setMessage(
+          `A new blog "${returnedBlog.title}" by ${returnedBlog.author} added`
+        );
+        setTimeout(() => setMessage(null), 5000);
+      })
+      .catch((error) => {
+        console.error("Error creating blog:", error);
+        setErrorMessage("An error occured while trying to create the blog");
+        setTimeout(() => setErrorMessage(null), 5000);
+      })
+  };
+
   return (
     <div>
       <h1>Bloglist</h1>
@@ -78,15 +98,11 @@ const App = () => {
         <div>
           <p>{user.name} logged in</p>
           <button onClick={handleLogout}>logout</button>
-          {
-            <BlogForm
-              blogs={blogs}
-              setBlogs={setBlogs}
-              setMessage={setMessage}
-              setErrorMessage={setErrorMessage}
-            />
-          }
           <h2>Blogs</h2>
+          <Togglable buttonLabel="new blog" ref={blogFormRef}>
+            <BlogForm createBlog={addBlog} />
+          </Togglable>
+          <br />
           {blogs.map((blog) => (
             <Blog key={blog.id} blog={blog} />
           ))}
