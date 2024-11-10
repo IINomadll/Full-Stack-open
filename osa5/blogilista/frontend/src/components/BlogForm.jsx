@@ -10,8 +10,8 @@ const BlogForm = ({ createBlog }) => {
     likes: 0,
   });
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
     setFormData({
       ...formData,
       [name]: value,
