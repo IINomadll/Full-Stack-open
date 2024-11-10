@@ -1,7 +1,7 @@
 import { useState } from "react";
 import blogService from "../services/blogs";
 
-const Blog = ({ blog, blogs, setBlogs }) => {
+const Blog = ({ blog, user, blogs, setBlogs }) => {
   const [viewAll, setViewAll] = useState(false);
   const blogStyle = {
     paddingLeft: 5,
@@ -9,6 +9,9 @@ const Blog = ({ blog, blogs, setBlogs }) => {
     borderRadius: 5,
     borderWidth: 1,
     margin: 5,
+  };
+  const deleteButtonStyle = {
+    marginBottom: 5,
   };
 
   const handleLike = () => {
@@ -23,6 +26,22 @@ const Blog = ({ blog, blogs, setBlogs }) => {
         );
       })
       .catch((error) => console.error("Error:", error));
+  };
+
+  const handleDelete = () => {
+    const choice = window.confirm(
+      `Delete blog ${blog.title} by ${blog.author}?`
+    );
+
+    if (choice) {
+      blogService
+        .eradicate(blog.id)
+        .then((response) => {
+          console.log("RESPONSE", response);
+          setBlogs(blogs.filter((b) => b.id !== blog.id));
+        })
+        .catch((err) => console.error("Error deleteing the blog:", err));
+    } else console.log("Delete action cancelled.");
   };
 
   // &ensp; is two space gap in html
@@ -42,6 +61,13 @@ const Blog = ({ blog, blogs, setBlogs }) => {
             <button onClick={handleLike}>like</button>
           </p>
           <p>{blog.user.name}</p>
+          {blog.user.username === user.username ? (
+            <button style={deleteButtonStyle} onClick={handleDelete}>
+              delete
+            </button>
+          ) : (
+            ""
+          )}
         </div>
       ) : (
         <div style={blogStyle}>
