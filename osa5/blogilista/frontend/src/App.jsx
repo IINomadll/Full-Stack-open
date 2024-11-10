@@ -81,6 +81,10 @@ const App = () => {
       })
   };
 
+  // sorting blogs in descending order using spreading to maintain
+  // immutability of original blogs -array
+  const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes);
+
   return (
     <div>
       <h1>Bloglist</h1>
@@ -103,7 +107,7 @@ const App = () => {
             <BlogForm createBlog={addBlog} />
           </Togglable>
           <br />
-          {blogs.map((blog) => (
+          {sortedBlogs.map((blog) => (
             <Blog key={blog.id} blog={blog} blogs={blogs} setBlogs={setBlogs} />
           ))}
         </div>
