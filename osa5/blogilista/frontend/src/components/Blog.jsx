@@ -71,7 +71,7 @@ const Blog = ({ blog, user, blogs, setBlogs }) => {
         </div>
       ) : (
         <div style={blogStyle}>
-          <p>
+          <p className="minimalBlog">
             {blog.title} {blog.author}&ensp;
             <button onClick={() => setViewAll(!viewAll)}>
               {viewAll ? "hide" : "view"}
