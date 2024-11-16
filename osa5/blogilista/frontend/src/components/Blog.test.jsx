@@ -1,6 +1,22 @@
 import { render, screen, fireEvent } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import Blog from "./Blog";
+
+vi.mock("../services/blogs", () => {
+  return {
+    default: {
+      update: vi.fn().mockResolvedValue({
+        id: "123",
+        title: "Test Blog Title",
+        author: "Test Author",
+        url: "http://example.com",
+        likes: 6,
+        user: { name: "Test User", username: "testuser" },
+      }),
+    },
+  };
+});
+
+import blogService from "../services/blogs";
 
 test("renders title", () => {
   const blog = {
@@ -41,4 +57,30 @@ test("renders all blog details when 'view' button is clicked", () => {
   expect(screen.getByText("http://test.example.com")).toBeDefined();
   expect(screen.getByText("likes: 13")).toBeDefined();
   expect(screen.getByText("Jarski")).toBeDefined();
+});
+
+test("calls handleLike twice when like button is clicked twice", () => {
+  const blog = {
+    title: "Test Blog Title",
+    author: "Test Author",
+    url: "http://example.com",
+    likes: 5,
+    user: { name: "Test User", username: "testuser" },
+  };
+
+  const user = { username: "testuser" };
+  const setBlogs = vi.fn();
+
+  render(<Blog blog={blog} user={user} blogs={[blog]} setBlogs={setBlogs} />);
+
+  // click the "view" button to show all details
+  fireEvent.click(screen.getByText("view"));
+
+  // find the like button and click it twice
+  const likeButton = screen.getByText("like");
+  fireEvent.click(likeButton);
+  fireEvent.click(likeButton);
+
+  // verify the `update` function was called twice
+  expect(blogService.update).toHaveBeenCalledTimes(2);
 });
