@@ -78,7 +78,7 @@ const App = () => {
         console.error("Error creating blog:", error);
         setErrorMessage("An error occured while trying to create the blog");
         setTimeout(() => setErrorMessage(null), 5000);
-      })
+      });
   };
 
   // sorting blogs in descending order using spreading to maintain
