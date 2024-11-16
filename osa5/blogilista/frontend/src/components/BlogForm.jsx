@@ -1,6 +1,5 @@
 import React from "react";
 import { useState } from "react";
-import blogService from "../services/blogs";
 
 const BlogForm = ({ createBlog }) => {
   const [formData, setFormData] = useState({
@@ -20,7 +19,10 @@ const BlogForm = ({ createBlog }) => {
 
   const addBlog = (event) => {
     event.preventDefault();
-    createBlog(formData);
+    createBlog({
+      ...formData,
+      likes: Number(formData.likes), // ensure likes is a number
+    });
     setFormData({ title: "", author: "", url: "", likes: 0 });
   };
 
@@ -28,50 +30,50 @@ const BlogForm = ({ createBlog }) => {
     <>
       <h2>Create new blog</h2>
       <form onSubmit={addBlog}>
-        <label>
-          Title:
-          <input
-            type="text"
-            name="title"
-            value={formData.title}
-            onChange={handleInputChange}
-            required
-          />
-          <br />
-          <label>
-            Author:
-            <input
-              type="text"
-              name="author"
-              value={formData.author}
-              onChange={handleInputChange}
-              required
-            />
-            <br />
-            <label>
-              url:
-              <input
-                type="text"
-                name="url"
-                value={formData.url}
-                onChange={handleInputChange}
-                required
-              />
-              <br />
-              <label>
-                Likes:
-                <input
-                  type="number"
-                  name="likes"
-                  value={formData.likes}
-                  onChange={handleInputChange}
-                />
-                <br />
-                <button type="submit">create</button>
-              </label>
-            </label>
-          </label>
-        </label>
+        <label htmlFor="title">Title:</label>
+        <input
+          type="text"
+          id="title"
+          name="title"
+          value={formData.title}
+          onChange={handleInputChange}
+          required
+        />
+        <br />
+
+        <label htmlFor="author">Author:</label>
+        <input
+          type="text"
+          id="author"
+          name="author"
+          value={formData.author}
+          onChange={handleInputChange}
+          required
+        />
+        <br />
+
+        <label htmlFor="url">URL:</label>
+        <input
+          type="text"
+          id="url"
+          name="url"
+          value={formData.url}
+          onChange={handleInputChange}
+          required
+        />
+        <br />
+
+        <label htmlFor="likes">Likes:</label>
+        <input
+          type="number"
+          id="likes"
+          name="likes"
+          value={formData.likes}
+          onChange={handleInputChange}
+        />
+        <br />
+
+        <button type="submit">create</button>
       </form>
     </>
   );
