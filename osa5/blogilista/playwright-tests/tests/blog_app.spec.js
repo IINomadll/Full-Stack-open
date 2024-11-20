@@ -50,7 +50,7 @@ describe("Blog app", () => {
       await expect(page.getByText("test title testerman")).toBeVisible();
     });
 
-    test("blog can be liked", async ({ page }) => {
+    test("a blog can be liked", async ({ page }) => {
       await createBlog(page, "dumb title", "dumb author", "this.is.dumb", 0);
       await page
         .locator("p")
@@ -60,6 +60,29 @@ describe("Blog app", () => {
       await expect(await page.getByText("likes: 0 like")).toBeVisible();
       await page.getByRole("button", { name: "like" }).click();
       await expect(await page.getByText("likes: 1 like")).toBeVisible();
+    });
+
+    test("a blog can be deleted by it's creator", async ({ page }) => {
+      await createBlog(page, "to be deleted", "yes", "delete.me", 6);
+      await page
+        .locator("p")
+        .filter({ hasText: "to be deleted yes" })
+        .getByRole("button")
+        .click();
+
+      // Set up an event listener to handle the confirmation dialog
+      page.on("dialog", async (dialog) => {
+        expect(dialog.type()).toBe("confirm"); // Ensure it's a confirm dialog
+
+        // Check for the dialog message
+        expect(dialog.message()).toBe("Delete blog to be deleted by yes?");
+        await dialog.accept(); // Accept the dialog to confirm deletion
+      });
+
+      await page.getByRole("button", { name: "delete" }).click();
+      await expect(
+        page.locator("p").filter({ hasText: "to be deleted yes" })
+      ).not.toBeVisible();
     });
   });
 });
