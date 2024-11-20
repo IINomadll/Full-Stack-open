@@ -18,12 +18,8 @@ describe("Blog app", () => {
     await expect(page.getByText("Login to application")).toBeVisible();
     await expect(page.getByText("username:")).toBeVisible();
     await expect(page.getByText("password:")).toBeVisible();
-    await expect(
-      page.locator("input", { name: "Username" }).first()
-    ).toBeVisible();
-    await expect(
-      page.locator("input", { name: "Password" }).last()
-    ).toBeVisible();
+    await expect(page.getByTestId("username")).toBeVisible();
+    await expect(page.getByTestId("password")).toBeVisible();
     await expect(page.locator("button", { name: "login" })).toBeVisible();
   });
 });
