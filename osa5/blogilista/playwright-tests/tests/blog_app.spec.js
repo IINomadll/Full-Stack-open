@@ -84,5 +84,32 @@ describe("Blog app", () => {
         page.locator("p").filter({ hasText: "to be deleted yes" })
       ).not.toBeVisible();
     });
+
+    test("delete blog button is only visible to the creator", async ({
+      page,
+      request,
+    }) => {
+      await createBlog(
+        page,
+        "jarskin blogi",
+        "Jarskibastian",
+        "jarski1337.net",
+        112
+      );
+      await page.getByRole("button", { name: "logout" }).click();
+      await request.post("http://localhost:3003/api/users", {
+        data: {
+          name: "Banec Attoo",
+          username: "banecat",
+          password: "salainen",
+        },
+      });
+      await loginWith(page, "banecat", "salainen");
+      await page.getByRole("button", { name: "view" }).click();
+
+      await expect(
+        page.getByRole("button", { name: "delete" })
+      ).not.toBeVisible();
+    });
   });
 });
