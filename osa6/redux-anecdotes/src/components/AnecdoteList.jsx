@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
-import { voteAction } from "../reducers/anecdoteReducer";
+import { vote } from "../reducers/anecdoteReducer";
 
 const AnecdoteList = () => {
   const anecdotes = useSelector(({ anecdotes, filter }) => {
@@ -13,9 +13,9 @@ const AnecdoteList = () => {
   });
   const dispatch = useDispatch();
 
-  const vote = (id) => {
+  const handleVote = (id) => {
     console.log("vote", id);
-    dispatch(voteAction(id));
+    dispatch(vote(id));
   };
 
   // sorting anecdotes in descending order using spreading to maintain
@@ -29,7 +29,7 @@ const AnecdoteList = () => {
           <div>{anecdote.content}</div>
           <div>
             has {anecdote.votes}
-            <button onClick={() => vote(anecdote.id)}>vote</button>
+            <button onClick={() => handleVote(anecdote.id)}>vote</button>
           </div>
         </div>
       ))}
