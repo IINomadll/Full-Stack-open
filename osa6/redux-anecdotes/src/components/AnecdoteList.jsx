@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { voteAnecdote } from "../reducers/anecdoteReducer";
-import { setNotification } from "../reducers/notificationReducer";
+import { notifier } from "../reducers/notificationReducer";
 
 const AnecdoteList = () => {
   const anecdotes = useSelector(({ anecdotes, filter }) => {
@@ -18,10 +18,7 @@ const AnecdoteList = () => {
     console.log("vote", id);
     const voted = anecdotes.find((a) => a.id === id);
     dispatch(voteAnecdote(id));
-    dispatch(setNotification(`you voted "${voted.content}"`));
-    setTimeout(() => {
-      dispatch(setNotification(""));
-    }, 5000);
+    dispatch(notifier(`you voted "${voted.content}"`, 5));
   };
 
   // sorting anecdotes in descending order using spreading to maintain
