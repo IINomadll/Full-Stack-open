@@ -11,6 +11,18 @@ const AnecdoteForm = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["anecdotes"] });
     },
+    onError: () => {
+      dispatch({
+        type: "ERR",
+        payload: "too short anecdote, must have length 5 or more",
+      });
+      setTimeout(() => {
+        dispatch({
+          type: "NOTIFY",
+          payload: "",
+        });
+      }, 5000);
+    },
   });
 
   const onCreate = (event) => {
