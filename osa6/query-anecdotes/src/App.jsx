@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getNotes } from "../requests";
+import { getAnecdotes } from "../requests";
 import AnecdoteForm from "./components/AnecdoteForm";
 import Notification from "./components/Notification";
 
@@ -10,7 +10,7 @@ const App = () => {
 
   const result = useQuery({
     queryKey: ["anecdotes"],
-    queryFn: getNotes,
+    queryFn: getAnecdotes,
     retry: 1,
   });
 
