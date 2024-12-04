@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 const Menu = () => {
   const padding = {
@@ -6,15 +7,15 @@ const Menu = () => {
   };
   return (
     <div>
-      <a href="#" style={padding}>
+      <Link style={padding} to={"/"}>
         anecdotes
-      </a>
-      <a href="#" style={padding}>
+      </Link>
+      <Link style={padding} to={"/create"}>
         create new
-      </a>
-      <a href="#" style={padding}>
+      </Link>
+      <Link style={padding} to={"/about"}>
         about
-      </a>
+      </Link>
     </div>
   );
 };
@@ -52,16 +53,22 @@ const About = () => (
   </div>
 );
 
-const Footer = () => (
-  <div>
-    Anecdote app for <a href="https://fullstackopen.com/">Full Stack Open</a>.
-    See{" "}
-    <a href="https://github.com/fullstack-hy2020/routed-anecdotes/blob/master/src/App.js">
-      https://github.com/fullstack-hy2020/routed-anecdotes/blob/master/src/App.js
-    </a>{" "}
-    for the source code.
-  </div>
-);
+const Footer = () => {
+  const style = {
+    marginTop: 20,
+  };
+
+  return (
+    <div style={style}>
+      Anecdote app for <a href="https://fullstackopen.com/">Full Stack Open</a>.
+      See{" "}
+      <a href="https://github.com/fullstack-hy2020/routed-anecdotes/blob/master/src/App.js">
+        https://github.com/fullstack-hy2020/routed-anecdotes/blob/master/src/App.js
+      </a>{" "}
+      for the source code.
+    </div>
+  );
+};
 
 const CreateNew = (props) => {
   const [content, setContent] = useState("");
@@ -152,11 +159,15 @@ const App = () => {
 
   return (
     <div>
-      <h1>Software anecdotes</h1>
-      <Menu />
-      <AnecdoteList anecdotes={anecdotes} />
-      <About />
-      <CreateNew addNew={addNew} />
+      <Router>
+        <h1>Software anecdotes</h1>
+        <Menu />
+        <Routes>
+          <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/create" element={<CreateNew addNew={addNew} />} />
+        </Routes>
+      </Router>
       <Footer />
     </div>
   );
