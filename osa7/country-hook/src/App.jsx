@@ -18,7 +18,26 @@ const useField = (type) => {
 const useCountry = (name) => {
   const [country, setCountry] = useState(null);
 
-  useEffect(() => {});
+  useEffect(() => {
+    console.log("effect run...");
+
+    if (name.length > 0) {
+      console.log("fetching country...");
+      axios
+        .get(`https://studies.cs.helsinki.fi/restcountries/api/name/${name}`)
+        .then((response) => {
+          console.log(response);
+          if (response.status === 200) {
+            console.log("tullaanko tänne if");
+            setCountry({ data: response.data, found: true });
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+          if (err.status === 404) setCountry({ found: false });
+        });
+    }
+  }, [name]); // lisää taulukkoon riippuvuus
 
   return country;
 };
@@ -27,18 +46,17 @@ const Country = ({ country }) => {
   if (!country) {
     return null;
   }
-
   if (!country.found) {
     return <div>not found...</div>;
   }
 
   return (
     <div>
-      <h3>{country.data.name} </h3>
+      <h3>{country.data.name.common} </h3>
       <div>capital {country.data.capital} </div>
       <div>population {country.data.population}</div>
       <img
-        src={country.data.flag}
+        src={country.data.flags.png}
         height="100"
         alt={`flag of ${country.data.name}`}
       />
