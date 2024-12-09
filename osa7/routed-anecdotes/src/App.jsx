@@ -8,6 +8,8 @@ import {
   useNavigate,
 } from "react-router-dom";
 
+import { useField } from "./hooks";
+
 const Menu = () => {
   const padding = {
     paddingRight: 5,
@@ -96,17 +98,20 @@ const Footer = () => {
 };
 
 const CreateNew = (props) => {
-  const [content, setContent] = useState("");
-  const [author, setAuthor] = useState("");
-  const [info, setInfo] = useState("");
+  // 'useNavigate' hook to programmatically navigate to different routes
   const navigate = useNavigate();
+
+  // using custom hook 'useField'
+  const content = useField("text");
+  const author = useField("text");
+  const infoUrl = useField("text");
 
   const handleSubmit = (e) => {
     e.preventDefault();
     props.addNew({
-      content,
-      author,
-      info,
+      content: content.value,
+      author: author.value,
+      info: infoUrl.value,
       votes: 0,
     });
     navigate("/");
@@ -116,30 +121,15 @@ const CreateNew = (props) => {
     <div>
       <h2>create a new anecdote</h2>
       <form onSubmit={handleSubmit}>
-        <div>
-          content
-          <input
-            name="content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-          />
-        </div>
-        <div>
-          author
-          <input
-            name="author"
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
-          />
-        </div>
-        <div>
-          url for more info
-          <input
-            name="info"
-            value={info}
-            onChange={(e) => setInfo(e.target.value)}
-          />
-        </div>
+        content:
+        <input {...content} />
+        <br />
+        author:
+        <input {...author} />
+        <br />
+        url for more info:
+        <input {...infoUrl} />
+        <br />
         <button>create</button>
       </form>
     </div>
