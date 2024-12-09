@@ -117,6 +117,7 @@ const CreateNew = (props) => {
     navigate("/");
   };
 
+  // exercise 7.6 already done somehow
   const handleReset = () => {
     content.onReset();
     author.onReset();
