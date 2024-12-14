@@ -7,15 +7,19 @@ import blogService from "./services/blogs";
 import loginService from "./services/login";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
+import {
+  useNotifyMessage,
+  useNotifyError,
+} from "./contexts/NotificationContext";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-  const [message, setMessage] = useState(null);
-  const [errorMessage, setErrorMessage] = useState(null);
 
+  const notifyMessage = useNotifyMessage();
+  const notifyError = useNotifyError();
   const blogFormRef = useRef();
 
   useEffect(() => {
@@ -30,6 +34,7 @@ const App = () => {
       const user = JSON.parse(loggedUserJSON);
       setUser(user);
       blogService.setToken(user.token);
+      notifyMessage(`Welcome back ${user.username}`);
     }
   }, []);
 
@@ -47,12 +52,10 @@ const App = () => {
       setUser(user);
       setUsername("");
       setPassword("");
+      notifyMessage(`${user.username} successfully logged in`);
     } catch (err) {
       console.error("Error: 401 unauthorized", err);
-      setErrorMessage("Wrong username and/or password");
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 5000);
+      notifyError("Wrong username and/or password");
     }
   };
 
@@ -69,15 +72,13 @@ const App = () => {
       .create(blogObject)
       .then((returnedBlog) => {
         setBlogs(blogs.concat(returnedBlog));
-        setMessage(
+        notifyMessage(
           `A new blog "${returnedBlog.title}" by ${returnedBlog.author} added`
         );
-        setTimeout(() => setMessage(null), 5000);
       })
       .catch((error) => {
         console.error("Error creating blog:", error);
-        setErrorMessage("An error occured while trying to create the blog");
-        setTimeout(() => setErrorMessage(null), 5000);
+        notifyError("An error occured while trying to create the blog");
       });
   };
 
@@ -88,7 +89,7 @@ const App = () => {
   return (
     <div>
       <h1>Bloglist</h1>
-      <Notification message={message} error={errorMessage} />
+      <Notification />
       {!user && (
         <LoginForm
           username={username}

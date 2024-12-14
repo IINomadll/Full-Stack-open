@@ -1,8 +1,14 @@
 import { useState } from "react";
 import blogService from "../services/blogs";
+import {
+  useNotifyMessage,
+  useNotifyError,
+} from "../contexts/NotificationContext";
 
 const Blog = ({ blog, user, blogs, setBlogs }) => {
   const [viewAll, setViewAll] = useState(false);
+  const notifyMessage = useNotifyMessage();
+  const notifyError = useNotifyError();
   const blogStyle = {
     paddingLeft: 5,
     border: "solid",
@@ -39,8 +45,12 @@ const Blog = ({ blog, user, blogs, setBlogs }) => {
         .then((response) => {
           console.log("RESPONSE", response);
           setBlogs(blogs.filter((b) => b.id !== blog.id));
+          notifyMessage("Blog deleted");
         })
-        .catch((err) => console.error("Error deleteing the blog:", err));
+        .catch((err) => {
+          console.error("Error deleting the blog:", err);
+          notifyError("Error deleting the blog");
+        });
     } else console.log("Delete action cancelled.");
   };
 
