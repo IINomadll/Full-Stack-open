@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import blogService from "../services/blogs";
 import {
@@ -64,7 +65,10 @@ const Blog = ({ blog, user }) => {
       {viewAll ? (
         <div style={blogStyle}>
           <p>
-            {blog.title} {blog.author}&ensp;
+            <Link to={`/blogs/${blog.id}`}>
+              {blog.title} {blog.author}
+            </Link>
+            &ensp;
             <button onClick={() => setViewAll(!viewAll)}>
               {viewAll ? "hide" : "view"}
             </button>

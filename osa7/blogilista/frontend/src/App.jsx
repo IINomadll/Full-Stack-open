@@ -10,8 +10,9 @@ import loginService from "./services/login";
 import userService from "./services/users";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
-import Users from "./components/Users";
-import User from "./components/User";
+import Users from "./pages/UsersPage";
+import User from "./pages/UserPage";
+import BlogPage from "./pages/BlogPage";
 import {
   useNotifyMessage,
   useNotifyError,
@@ -48,7 +49,6 @@ const App = () => {
       const user = JSON.parse(loggedUserJSON);
       userDispatch({ type: "LOGIN", payload: user });
       blogService.setToken(user.token);
-      notifyMessage(`Welcome back ${user.username}`);
     }
   }, [userDispatch]);
 
@@ -150,6 +150,7 @@ const App = () => {
             <button onClick={handleLogout}>logout</button>
             <Routes>
               <Route path="/users/:id" element={<User users={users} />} />
+              <Route path="/blogs/:id" element={<BlogPage blogs={blogs} />} />
               <Route path="/users" element={<Users users={users} />} />
               <Route
                 path="/"
