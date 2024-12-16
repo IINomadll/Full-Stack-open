@@ -31,6 +31,12 @@ const BlogPage = ({ blogs }) => {
       <p>
         {blog.likes} likes&ensp;<button onClick={handleLike}>like</button>
       </p>
+      <h3>comments</h3>
+      <ul>
+        {blog.comments.map((comment, index) => (
+          <li key={index}>{comment}</li>
+        ))}
+      </ul>
     </>
   );
 };
