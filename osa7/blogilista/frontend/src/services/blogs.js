@@ -43,4 +43,9 @@ const eradicate = async (id) => {
   return await axios.delete(`${baseUrl}/${id}`, config);
 };
 
-export default { getAll, create, setToken, update, eradicate };
+const comment = async ({ id, comment }) => {
+  const response = await axios.post(`${baseUrl}/${id}/comments`, { comment });
+  return response.data;
+};
+
+export default { getAll, create, setToken, update, eradicate, comment };
