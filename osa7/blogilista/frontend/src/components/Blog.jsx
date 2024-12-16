@@ -5,7 +5,7 @@ import {
   useNotifyError,
 } from "../contexts/NotificationContext";
 
-const Blog = ({ blog, user, blogs, setBlogs }) => {
+const Blog = ({ blog, user, blogs }) => {
   const [viewAll, setViewAll] = useState(false);
   const notifyMessage = useNotifyMessage();
   const notifyError = useNotifyError();

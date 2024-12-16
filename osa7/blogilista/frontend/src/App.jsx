@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import Blog from "./components/Blog";
 import BlogForm from "./components/BlogForm";
@@ -13,20 +14,25 @@ import {
 } from "./contexts/NotificationContext";
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
 
+  // needed for mutation
+  const queryClient = useQueryClient();
+
+  // reusable functions returned by useNotify -custom hooks
   const notifyMessage = useNotifyMessage();
   const notifyError = useNotifyError();
-  const blogFormRef = useRef();
 
-  useEffect(() => {
-    blogService.getAll().then((blogs) => {
-      setBlogs(blogs);
-    });
-  }, []);
+  const blogFormRef = useRef();
+  const newBlogMutation = useMutation({
+    mutationFn: blogService.create,
+    onSuccess: () => {
+      // react-query updates blog query so that added blog is rendered on screen
+      queryClient.invalidateQueries({ queryKey: ["blogs"] });
+    },
+  });
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBloglistUser");
@@ -37,6 +43,15 @@ const App = () => {
       notifyMessage(`Welcome back ${user.username}`);
     }
   }, []);
+
+  const queryResult = useQuery({
+    queryKey: ["blogs"],
+    queryFn: blogService.getAll,
+  });
+
+  if (queryResult.isLoading) return <div>loading data...</div>;
+
+  const blogs = queryResult.data;
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -67,19 +82,15 @@ const App = () => {
 
   const addBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility();
-    // prettier-ignore
-    blogService
-      .create(blogObject)
-      .then((returnedBlog) => {
-        setBlogs(blogs.concat(returnedBlog));
-        notifyMessage(
-          `A new blog "${returnedBlog.title}" by ${returnedBlog.author} added`
-        );
-      })
-      .catch((error) => {
-        console.error("Error creating blog:", error);
-        notifyError("An error occured while trying to create the blog");
-      });
+    try {
+      newBlogMutation.mutate(blogObject); // saves the blog to db
+      notifyMessage(
+        `A new blog "${blogObject.title}" by ${blogObject.author} added`
+      );
+    } catch (error) {
+      console.error("Error creating blog:", error);
+      notifyError("An error occured while trying to create the blog");
+    }
   };
 
   // sorting blogs in descending order using spreading to maintain
@@ -109,13 +120,7 @@ const App = () => {
           </Togglable>
           <br />
           {sortedBlogs.map((blog) => (
-            <Blog
-              key={blog.id}
-              blog={blog}
-              user={user}
-              blogs={blogs}
-              setBlogs={setBlogs}
-            />
+            <Blog key={blog.id} blog={blog} user={user} blogs={blogs} />
           ))}
         </div>
       )}
