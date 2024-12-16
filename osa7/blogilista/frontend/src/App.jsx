@@ -26,6 +26,7 @@ const App = () => {
   const notifyError = useNotifyError();
 
   const blogFormRef = useRef();
+
   const newBlogMutation = useMutation({
     mutationFn: blogService.create,
     onSuccess: () => {
@@ -120,7 +121,7 @@ const App = () => {
           </Togglable>
           <br />
           {sortedBlogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} user={user} blogs={blogs} />
+            <Blog key={blog.id} blog={blog} user={user} />
           ))}
         </div>
       )}

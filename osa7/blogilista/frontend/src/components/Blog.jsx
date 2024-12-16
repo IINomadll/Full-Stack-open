@@ -1,14 +1,33 @@
 import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import blogService from "../services/blogs";
 import {
   useNotifyMessage,
   useNotifyError,
 } from "../contexts/NotificationContext";
 
-const Blog = ({ blog, user, blogs }) => {
+const Blog = ({ blog, user }) => {
   const [viewAll, setViewAll] = useState(false);
   const notifyMessage = useNotifyMessage();
   const notifyError = useNotifyError();
+
+  // needed for mutation
+  const queryClient = useQueryClient();
+
+  const updateBlogMutation = useMutation({
+    mutationFn: blogService.update,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["blogs"] });
+    },
+  });
+
+  const deleteBlogMutation = useMutation({
+    mutationFn: blogService.eradicate,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["blogs"] });
+    },
+  });
+
   const blogStyle = {
     paddingLeft: 5,
     border: "solid",
@@ -22,16 +41,7 @@ const Blog = ({ blog, user, blogs }) => {
 
   const handleLike = () => {
     const likedBlog = { ...blog, likes: blog.likes + 1 };
-    blogService
-      .update(likedBlog)
-      .then((updatedBlog) => {
-        setBlogs(
-          blogs.map((b) =>
-            b.id !== updatedBlog.id ? b : { ...b, likes: updatedBlog.likes }
-          )
-        );
-      })
-      .catch((error) => console.error("Error:", error));
+    updateBlogMutation.mutate(likedBlog);
   };
 
   const handleDelete = () => {
@@ -40,18 +50,12 @@ const Blog = ({ blog, user, blogs }) => {
     );
 
     if (choice) {
-      blogService
-        .eradicate(blog.id)
-        .then((response) => {
-          console.log("RESPONSE", response);
-          setBlogs(blogs.filter((b) => b.id !== blog.id));
-          notifyMessage("Blog deleted");
-        })
-        .catch((err) => {
-          console.error("Error deleting the blog:", err);
-          notifyError("Error deleting the blog");
-        });
-    } else console.log("Delete action cancelled.");
+      deleteBlogMutation.mutate(blog.id);
+      notifyMessage("Blog deleted successfully");
+    } else {
+      console.log("Delete action cancelled");
+      notifyError("Delete action cancelled");
+    }
   };
 
   // &ensp; is two space gap in html
