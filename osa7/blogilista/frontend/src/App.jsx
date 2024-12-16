@@ -123,55 +123,57 @@ const App = () => {
   };
 
   return (
-    <Router>
-      <div>
-        <Link style={padding} to="/">
-          Blogs
-        </Link>
-        <Link style={padding} to="/users">
-          Users
-        </Link>
-      </div>
-      <div>
-        <h1>Bloglist</h1>
-        <Notification />
-        {!user && (
-          <LoginForm
-            username={username}
-            password={password}
-            setUsername={setUsername}
-            setPassword={setPassword}
-            handleLogin={handleLogin}
-          />
-        )}
-        {user && (
-          <div>
-            <p>{user.name} logged in</p>
-            <button onClick={handleLogout}>logout</button>
-            <Routes>
-              <Route path="/users/:id" element={<User users={users} />} />
-              <Route path="/blogs/:id" element={<BlogPage blogs={blogs} />} />
-              <Route path="/users" element={<Users users={users} />} />
-              <Route
-                path="/"
-                element={
-                  <>
-                    <h2>Blogs</h2>
-                    <Togglable buttonLabel="new blog" ref={blogFormRef}>
-                      <BlogForm createBlog={addBlog} />
-                    </Togglable>
-                    <br />
-                    {sortedBlogs.map((blog) => (
-                      <Blog key={blog.id} blog={blog} user={user} />
-                    ))}
-                  </>
-                }
-              />
-            </Routes>
-          </div>
-        )}
-      </div>
-    </Router>
+    <div className="container">
+      <Router>
+        <div>
+          <Link style={padding} to="/">
+            Blogs
+          </Link>
+          <Link style={padding} to="/users">
+            Users
+          </Link>
+        </div>
+        <div>
+          <h1>Bloglist</h1>
+          <Notification />
+          {!user && (
+            <LoginForm
+              username={username}
+              password={password}
+              setUsername={setUsername}
+              setPassword={setPassword}
+              handleLogin={handleLogin}
+            />
+          )}
+          {user && (
+            <div>
+              <p>{user.name} logged in</p>
+              <button onClick={handleLogout}>logout</button>
+              <Routes>
+                <Route path="/users/:id" element={<User users={users} />} />
+                <Route path="/blogs/:id" element={<BlogPage blogs={blogs} />} />
+                <Route path="/users" element={<Users users={users} />} />
+                <Route
+                  path="/"
+                  element={
+                    <>
+                      <h2>Blogs</h2>
+                      <Togglable buttonLabel="new blog" ref={blogFormRef}>
+                        <BlogForm createBlog={addBlog} />
+                      </Togglable>
+                      <br />
+                      {sortedBlogs.map((blog) => (
+                        <Blog key={blog.id} blog={blog} user={user} />
+                      ))}
+                    </>
+                  }
+                />
+              </Routes>
+            </div>
+          )}
+        </div>
+      </Router>
+    </div>
   );
 };
 
