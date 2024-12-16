@@ -17,14 +17,14 @@ const Blog = ({ blog, user }) => {
   const updateBlogMutation = useMutation({
     mutationFn: blogService.update,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["blogs"] });
+      queryClient.invalidateQueries({ queryKey: ["blogsAndUsers"] });
     },
   });
 
   const deleteBlogMutation = useMutation({
     mutationFn: blogService.eradicate,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["blogs"] });
+      queryClient.invalidateQueries({ queryKey: ["blogsAndUsers"] });
     },
   });
 

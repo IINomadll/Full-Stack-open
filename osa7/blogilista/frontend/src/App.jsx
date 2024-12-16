@@ -1,13 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 import Blog from "./components/Blog";
 import BlogForm from "./components/BlogForm";
 import LoginForm from "./components/loginForm";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
+import userService from "./services/users";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
+import Users from "./components/Users";
 import {
   useNotifyMessage,
   useNotifyError,
@@ -34,7 +37,7 @@ const App = () => {
     mutationFn: blogService.create,
     onSuccess: () => {
       // react-query updates blog query so that added blog is rendered on screen
-      queryClient.invalidateQueries({ queryKey: ["blogs"] });
+      queryClient.invalidateQueries({ queryKey: ["blogsAndUsers"] });
     },
   });
 
@@ -48,14 +51,22 @@ const App = () => {
     }
   }, [userDispatch]);
 
-  const queryResult = useQuery({
-    queryKey: ["blogs"],
-    queryFn: blogService.getAll,
+  // get both blogs and users using useQuery and Promise.all
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["blogsAndUsers"],
+    queryFn: async () => {
+      const [blogs, users] = await Promise.all([
+        blogService.getAll(),
+        userService.getAll(),
+      ]);
+      return { blogs, users };
+    },
   });
 
-  if (queryResult.isLoading) return <div>loading data...</div>;
+  if (isLoading) return <div>loading data...</div>;
+  if (isError) return <div>Error: {error.message}</div>;
 
-  const blogs = queryResult.data;
+  const { blogs, users } = data;
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -102,34 +113,62 @@ const App = () => {
   // immutability of original blogs -array
   const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes);
 
+  const padding = {
+    padding: 5,
+  };
+
+  const marginBottom = {
+    marginBottom: 15,
+  };
+
   return (
-    <div>
-      <h1>Bloglist</h1>
-      <Notification />
-      {!user && (
-        <LoginForm
-          username={username}
-          password={password}
-          setUsername={setUsername}
-          setPassword={setPassword}
-          handleLogin={handleLogin}
-        />
-      )}
-      {user && (
-        <div>
-          <p>{user.name} logged in</p>
-          <button onClick={handleLogout}>logout</button>
-          <h2>Blogs</h2>
-          <Togglable buttonLabel="new blog" ref={blogFormRef}>
-            <BlogForm createBlog={addBlog} />
-          </Togglable>
-          <br />
-          {sortedBlogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} user={user} />
-          ))}
-        </div>
-      )}
-    </div>
+    <Router>
+      <div>
+        <Link style={padding} to="/">
+          Blogs
+        </Link>
+        <Link style={padding} to="/users">
+          Users
+        </Link>
+      </div>
+      <div>
+        <h1>Bloglist</h1>
+        <Notification />
+        {!user && (
+          <LoginForm
+            username={username}
+            password={password}
+            setUsername={setUsername}
+            setPassword={setPassword}
+            handleLogin={handleLogin}
+          />
+        )}
+        {user && (
+          <div>
+            <p>{user.name} logged in</p>
+            <button onClick={handleLogout}>logout</button>
+            <Routes>
+              <Route path="/users" element={<Users users={users} />} />
+              <Route
+                path="/"
+                element={
+                  <>
+                    <h2>Blogs</h2>
+                    <Togglable buttonLabel="new blog" ref={blogFormRef}>
+                      <BlogForm createBlog={addBlog} />
+                    </Togglable>
+                    <br />
+                    {sortedBlogs.map((blog) => (
+                      <Blog key={blog.id} blog={blog} user={user} />
+                    ))}
+                  </>
+                }
+              />
+            </Routes>
+          </div>
+        )}
+      </div>
+    </Router>
   );
 };
 
