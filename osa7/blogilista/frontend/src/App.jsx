@@ -12,11 +12,14 @@ import {
   useNotifyMessage,
   useNotifyError,
 } from "./contexts/NotificationContext";
+import { useUserValue, useUserDispatch } from "./contexts/UserContext";
 
 const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [user, setUser] = useState(null);
+
+  const user = useUserValue();
+  const userDispatch = useUserDispatch();
 
   // needed for mutation
   const queryClient = useQueryClient();
@@ -39,11 +42,11 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem("loggedBloglistUser");
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
-      setUser(user);
+      userDispatch({ type: "LOGIN", payload: user });
       blogService.setToken(user.token);
       notifyMessage(`Welcome back ${user.username}`);
     }
-  }, []);
+  }, [userDispatch]);
 
   const queryResult = useQuery({
     queryKey: ["blogs"],
@@ -65,7 +68,7 @@ const App = () => {
       console.log(`${user.username} logged in`);
       window.localStorage.setItem("loggedBloglistUser", JSON.stringify(user));
       blogService.setToken(user.token);
-      setUser(user);
+      userDispatch({ type: "LOGIN", payload: user });
       setUsername("");
       setPassword("");
       notifyMessage(`${user.username} successfully logged in`);
@@ -77,8 +80,9 @@ const App = () => {
 
   const handleLogout = () => {
     window.localStorage.removeItem("loggedBloglistUser");
-    setUser(null);
+    userDispatch({ type: "LOGOUT" });
     console.log("logged out");
+    notifyMessage("Successfully logged out");
   };
 
   const addBlog = (blogObject) => {
