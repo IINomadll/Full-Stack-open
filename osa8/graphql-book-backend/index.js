@@ -5,6 +5,7 @@ require("dotenv").config();
 
 const Book = require("./models/book");
 const Author = require("./models/author");
+const { GraphQLError } = require("graphql");
 
 mongoose.set("strictQuery", false);
 
@@ -84,11 +85,38 @@ const resolvers = {
 
       if (!author) {
         author = new Author({ name: args.author });
-        await author.save();
+
+        try {
+          await author.save();
+        } catch (error) {
+          throw new GraphQLError(
+            "Operation failed, author name should be atleast 4 characters and unique",
+            {
+              extensions: {
+                code: "BAD_USER_INPUT",
+                invalidArgs: args.author,
+                error,
+              },
+            }
+          );
+        }
       }
 
       const book = new Book({ ...args, author: author._id });
-      await book.save();
+      try {
+        await book.save();
+      } catch (error) {
+        throw new GraphQLError(
+          "Operation failed, book name should be atleast 5 characters and unique",
+          {
+            extensions: {
+              code: "BAD_USER_INPUT",
+              invalidArgs: args.title,
+              error,
+            },
+          }
+        );
+      }
 
       return book.populate("author");
     },
@@ -97,7 +125,18 @@ const resolvers = {
       if (!author) return null;
 
       author.born = args.born;
-      await author.save();
+      try {
+        await author.save();
+      } catch (error) {
+        throw new GraphQLError("Operation failed", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            invalidArgs: [args.name, args.born],
+            error,
+          },
+        });
+      }
+
       return author;
     },
   },
