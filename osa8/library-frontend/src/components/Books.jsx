@@ -5,7 +5,11 @@ import { ALL_BOOKS } from "../queries";
 
 const Books = (props) => {
   const [currentGenre, setCurrentGenre] = useState("all");
-  const result = useQuery(ALL_BOOKS);
+  const result = useQuery(ALL_BOOKS, {
+    variables: {
+      genre: currentGenre === "all" ? null : currentGenre,
+    },
+  });
 
   if (!props.show) return null;
   if (result.loading) return <div>loading...</div>;
@@ -16,11 +20,6 @@ const Books = (props) => {
   // Set removes any duplicate values
   // "all" added manually at the end
   const genres = [...new Set(books.flatMap((b) => b.genres)), "all"];
-
-  const filteredBooks =
-    currentGenre === "all"
-      ? books
-      : books.filter((b) => b.genres.includes(currentGenre));
 
   return (
     <div>
@@ -35,7 +34,7 @@ const Books = (props) => {
           </tr>
         </thead>
         <tbody>
-          {filteredBooks.map((book) => (
+          {books.map((book) => (
             <tr key={book.title}>
               <td>{book.title}</td>
               <td>{book.author.name}</td>
