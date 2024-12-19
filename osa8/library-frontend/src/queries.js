@@ -1,5 +1,13 @@
 import { gql } from "@apollo/client";
 
+// type Book {
+//   title: String!
+//   published: Int!
+//   author: Author!
+//   genres: [String!]!
+//   id: ID!
+// }
+
 export const ALL_AUTHORS = gql`
   query {
     allAuthors {
@@ -14,8 +22,12 @@ export const ALL_BOOKS = gql`
   query {
     allBooks {
       title
-      author
       published
+      genres
+      author {
+        name
+        born
+      }
     }
   }
 `;
