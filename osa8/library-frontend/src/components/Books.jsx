@@ -8,7 +8,6 @@ const Books = (props) => {
   if (!props.show) return null;
   if (result.loading) return <div>loading...</div>;
 
-  console.log("result:", result);
   const books = result.data.allBooks;
 
   return (
