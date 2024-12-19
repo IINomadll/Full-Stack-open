@@ -17,7 +17,7 @@ const Login = ({ show, setToken, setPage, token }) => {
 
   useEffect(() => {
     if (result.data) {
-      console.log("RESULT:", result.data);
+      // console.log("RESULT:", result.data);
       const token = result.data.login.value;
       setToken(token);
       localStorage.setItem("library-user-token", token);
